@@ -1,0 +1,16 @@
+[
+{
+  "modid": "golemtracker",
+  "name": "Golem Tracker",
+  "description": "Mod that tracks golem drops.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["mjnt"],
+  "credits": "me, mjnt, and I",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

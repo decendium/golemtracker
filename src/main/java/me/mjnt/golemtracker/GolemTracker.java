@@ -1,6 +1,5 @@
 package me.mjnt.golemtracker;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import me.mjnt.golemtracker.commands.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -12,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,8 +24,7 @@ public class GolemTracker
     public static final String VERSION = "1.0";
     public static final String NAME = "Golem Tracker";
 
-    public static int epicGolemCount = -1;
-    public static int legGolemCount = -1;
+    public static int golemCount = -1;
     public static int tbCount = -1;
     public static int posX = -1;
     public static int posY = -1;
@@ -52,43 +51,40 @@ public class GolemTracker
 
     @SubscribeEvent
     public void onChat(ClientChatReceivedEvent event) {
-        String messageTB = event.message.getUnformattedText();
+        String message = event.message.getUnformattedText();
         // [00:43:07] [Client thread/INFO]: [CHAT] [MVP+] mjnt has obtained [Lvl 1] Golem!
-        String messageGolem = event.message.getFormattedText();
+        // &r&b[MVP&r&c+&r&b] KatAura&r&f &r&ehas obtained &r&6&r&7[Lvl 1] &r&5Golem&r&e!&r
+        // &r&r&r                 &r&eYour Damage: &r&a3,844,539 &r&7(Position #1)&r
         String name = Minecraft.getMinecraft().getSession().getUsername();
-        if (messageTB.startsWith("[") && messageGolem.endsWith("&5Golem&r&e!") && messageTB.contains(name)) {
-            int epicGolem = ConfigHandler.getInt("drops", "golems_epic");
-            int totalEpicGolems = 1 + epicGolem;
-            epicGolemCount = totalEpicGolems;
-            ConfigHandler.writeIntConfig("drops", "golems_epic", totalEpicGolems);
+        // if message has golem drop
+        // idfc about rarities anymore im tired of coding
+        if (message.startsWith("[") && message.endsWith(" has obtained [Lvl 1] Golem!") && message.contains(name)) {
+            int golems = ConfigHandler.getInt("drops", "golems");
+            golems++;
+            golemCount = golems;
+            ConfigHandler.writeIntConfig("drops", "golems", golemCount);
         }
-        if (messageTB.startsWith("[") && messageGolem.endsWith("&6Golem&r&e!") && messageTB.contains(name)) {
-            int legGolem = ConfigHandler.getInt("drops", "golems_leg");
-            int totalLegGolems = 1 + legGolem;
-            epicGolemCount = totalLegGolems;
-            ConfigHandler.writeIntConfig("drops", "golems_leg", totalLegGolems);
-        }
-        if (messageTB.startsWith("[") && messageTB.endsWith("Core&r&e!") && messageTB.contains(name)) {
+        // if message has "Core!"
+        if (message.startsWith("[") && message.endsWith(" has obtained Tier Boost Core!") && message.contains(name)) {
             int TB = ConfigHandler.getInt("drops", "cores");
-            int totalTB = 1 + TB;
-            tbCount = totalTB;
+            TB++;
+            tbCount = TB;
             ConfigHandler.writeIntConfig("drops", "cores", tbCount);
         }
     }
 
     @SubscribeEvent
     public void render(RenderGameOverlayEvent event) {
+        // idfk what this does
         if (event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             return;
         }
+        // loads once
         if (displayToggled == null) {
             displayToggled = ConfigHandler.getBoolean("toggles", "display");
         }
-        if (epicGolemCount == -1) {
-            epicGolemCount = ConfigHandler.getInt("drops", "golems");
-        }
-        if (legGolemCount == -1) {
-            legGolemCount = ConfigHandler.getInt("drops", "golems_leg");
+        if (golemCount == -1) {
+            golemCount = ConfigHandler.getInt("drops", "golems_epic");
         }
         if (tbCount == -1) {
             tbCount = ConfigHandler.getInt("drops", "cores");
@@ -99,15 +95,9 @@ public class GolemTracker
         }
         if (displayToggled == true) {
             FontRenderer fRender = Minecraft.getMinecraft().fontRendererObj;
-
-            // TODO  fix fucking stupid ass lf box BY not using \n (maybe done?)
-            //                     + EnumChatFormatting.RED + "\nTier Boosts: " + EnumChatFormatting.WHITE + tbCount,
-            //                     + EnumChatFormatting.GOLD + "\nLeg Golems: " + EnumChatFormatting.WHITE + legGolemCount
-            fRender.drawString(EnumChatFormatting.DARK_PURPLE + "Epic Golems: " + EnumChatFormatting.WHITE + epicGolemCount, posX, posY, 0);
-            // i wonder
-            fRender.drawString(EnumChatFormatting.GOLD + "Leg Golems: " + EnumChatFormatting.WHITE + legGolemCount, posX, posY + 11, 0);
-            // i really wonder                                                                                               v i am best co..der btw
-            fRender.drawString(EnumChatFormatting.RED + "Tier Boosts: " + EnumChatFormatting.WHITE + tbCount, posX, posY + 22, 0);
+            // renders the gui thing
+            fRender.drawString(EnumChatFormatting.GOLD + "Golem Pets: " + EnumChatFormatting.WHITE + golemCount, posX, posY, 0);
+            fRender.drawString(EnumChatFormatting.RED + "Tier Boosts: " + EnumChatFormatting.WHITE + tbCount, posX, posY + 11, 0);
         }
     }
 

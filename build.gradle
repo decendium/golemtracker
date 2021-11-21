@@ -13,14 +13,14 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-
+sourceCompatibility = targetCompatibility = 1.8
 /*
 // for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "1.2.1"
+version = "1.2.2"
 group= "me.mjnt.golemtracker" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "GolemTracker"
 

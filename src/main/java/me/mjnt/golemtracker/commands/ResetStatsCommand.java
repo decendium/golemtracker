@@ -33,10 +33,8 @@ public class ResetStatsCommand extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         GolemTracker.tbCount = 0;
-        GolemTracker.epicGolemCount = 0;
-        GolemTracker.legGolemCount = 0;
-        ConfigHandler.writeIntConfig("drops", "golems_epic", 0);
-        ConfigHandler.writeIntConfig("drops", "golems_leg", 0);
+        GolemTracker.golemCount = 0;
+        ConfigHandler.writeIntConfig("drops", "golems", 0);
         ConfigHandler.writeIntConfig("drops", "cores", 0);
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Drops set to 0."));
     }
